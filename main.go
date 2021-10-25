@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
-	"log"
 )
 
 type Config struct {
@@ -33,5 +34,4 @@ func main() {
 	}
 
 	// Set-up repository e.g. database, service connection
-
 }
