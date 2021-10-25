@@ -3,11 +3,13 @@ package auth
 import (
 	"clarchgo/entity/auth"
 	"context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 	"time"
 )
 
@@ -67,11 +69,15 @@ func (m mongoDB) GetUserByUsername(ctx context.Context, username string) (auth.U
 	)
 
 	err := doc.Decode(&u)
-	if err != nil {
+
+	switch err {
+	case mongo.ErrNoDocuments:
+		return auth.User{}, ErrUserNotFound
+	case nil:
+		return u.toUser(), nil
+	default:
 		return auth.User{}, err
 	}
-
-	return u.toUser(), nil
 }
 
 func (m mongoDB) DeleteUserByUsername(ctx context.Context, username string) error {
@@ -196,9 +202,44 @@ func NewMongo(mongoUri, database string) (Repository, error) {
 		return nil, err
 	}
 
+	userCol := client.Database(database).Collection("user")
+	tokenCol := client.Database(database).Collection("token")
+
+	_, err = userCol.Indexes().CreateMany(
+		ctx,
+		[]mongo.IndexModel{
+			{
+				Keys: bsonx.Doc{{Key: "username", Value: bsonx.Int32(1)}},
+				Options: options.Index().
+					SetUnique(true).
+					SetPartialFilterExpression(bson.M{"is_deleted": false}),
+			},
+		},
+	)
+	if err != nil {
+		fmt.Printf("Create user index error: %s\n", err)
+	}
+
+	_, err = tokenCol.Indexes().CreateMany(
+		ctx,
+		[]mongo.IndexModel{
+			{
+				Keys:    bsonx.Doc{{Key: "token", Value: bsonx.Int32(1)}},
+				Options: options.Index().SetUnique(true),
+			},
+			{
+				Keys:    bsonx.Doc{{Key: "expires_by", Value: bsonx.Int32(1)}},
+				Options: options.Index().SetExpireAfterSeconds(0),
+			},
+		},
+	)
+	if err != nil {
+		fmt.Printf("Create user index error: %s\n", err)
+	}
+
 	return &mongoDB{
-		userCol:  client.Database(database).Collection("user"),
-		tokenCol: client.Database(database).Collection("token"),
+		userCol:  userCol,
+		tokenCol: tokenCol,
 	}, nil
 }
 

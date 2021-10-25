@@ -54,7 +54,7 @@ func TestMongoDB_Case1(t *testing.T) {
 
 	cred, err := auth.NewPasswordCredentials("password")
 	exitIfError(err, t)
-	u := auth.NewUser(userNames[0], cred)
+	u := auth.NewUser(userNames[1], cred)
 
 	err = m.CreateUser(ctx, u)
 	if err != ErrUserAlreadyExist {
@@ -94,6 +94,8 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
+	// Delete user and re-create that user
+
 	err = m.DeleteUserByUsername(ctx, userNames[1])
 	exitIfError(err, t)
 
@@ -106,9 +108,24 @@ func TestMongoDB_Case1(t *testing.T) {
 	}
 
 	u, err = m.GetUserByUsername(ctx, userNames[1])
-
 	if err != ErrUserNotFound {
 		t.Error("user should be deleted")
+		return
+	}
+
+	cred, err = auth.NewPasswordCredentials("password")
+	exitIfError(err, t)
+	u = auth.NewUser(userNames[1], cred)
+
+	err = m.CreateUser(ctx, u)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = m.CreateUser(ctx, u)
+	if err != ErrUserAlreadyExist {
+		t.Error("should not able to create user", err)
 		return
 	}
 }
