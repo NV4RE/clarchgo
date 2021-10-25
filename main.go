@@ -1,13 +1,13 @@
 package main
 
 import (
-	fiber "clarchgo/controller/fiber"
+	"clarchgo/controller/fiber"
 	"clarchgo/repository/auth"
 	authUseCase "clarchgo/use-case/auth"
 	"fmt"
 	"log"
 
-	"github.com/caarlos0/env"
+	"github.com/caarlos0/env/v6"
 	"github.com/joho/godotenv"
 )
 

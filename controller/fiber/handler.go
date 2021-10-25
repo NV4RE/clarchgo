@@ -2,8 +2,13 @@ package fiber
 
 import (
 	"clarchgo/entity/auth"
+	"errors"
 	"github.com/gofiber/fiber/v2"
 	"strings"
+)
+
+var (
+	ErrAuthorizationHeaderRequired = errors.New("authorization header required")
 )
 
 const OK string = "OK"
@@ -39,6 +44,10 @@ func (f *fiberServer) errorHandler(c *fiber.Ctx, err error) error {
 func (f *fiberServer) getUserFromHeader(c *fiber.Ctx) (auth.User, error) {
 	authHeader := string(c.Request().Header.Peek("Authorization"))
 
-	ah := strings.SplitN(authHeader, " ", 2)
+	ah := strings.Split(authHeader, " ")
+	if len(ah) != 2 {
+		return auth.User{}, ErrAuthorizationHeaderRequired
+	}
+
 	return f.authUC.GetUserByToken(c.Context(), ah[1])
 }

@@ -3,7 +3,7 @@ module clarchgo
 go 1.17
 
 require (
-	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/caarlos0/env/v6 v6.7.2
 	github.com/gofiber/fiber/v2 v2.20.2
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.7.3
