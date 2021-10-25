@@ -1,7 +1,12 @@
 package auth
 
 import (
+	"errors"
 	"time"
+)
+
+var (
+	ErrUserDoesNotHaveAnyPermission = errors.New("user does not have any permission")
 )
 
 type User struct {
@@ -20,4 +25,19 @@ func NewUser(username string, cred Credentials) User {
 		IsActivated: false,
 		CreatedAt:   time.Now(),
 	}
+}
+
+func (u User) IsAllowed(perm Permission) error {
+	if len(u.Roles) == 0 {
+		return ErrUserDoesNotHaveAnyPermission
+	}
+
+	for _, r := range u.Roles {
+		err := r.IsAllowed(perm)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

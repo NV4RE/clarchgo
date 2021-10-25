@@ -2,6 +2,7 @@ package main
 
 import (
 	"clarchgo/repository/auth"
+	authUseCase "clarchgo/use-case/auth"
 	"fmt"
 	"log"
 
@@ -36,11 +37,13 @@ func main() {
 	}
 
 	// Set-up repository e.g. database, service connection
-	_, err = auth.NewMongo(cfg.MongoURI, fmt.Sprintf("%s-%s", cfg.App.Environment, cfg.App))
+	authRepo, err := auth.NewMongo(cfg.MongoURI, fmt.Sprintf("%s-%s", cfg.App.Environment, cfg.App))
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Set-up use-case e.g. business
+	authUC := authUseCase.NewUseCase(authRepo)
 
+	fmt.Sprintf("%s", authUC)
 }

@@ -30,6 +30,27 @@ func TestRole_IsAllowed(t *testing.T) {
 	}
 }
 
+func TestRole_IsAllowed_Empty(t *testing.T) {
+	r := Role{
+		Accesses: []string{},
+	}
+
+	err := r.IsAllowed(PermissionAuthRoleCompanyRead)
+	if err != ErrPermissionDenied {
+		t.Errorf("should reject with ErrPermissionDenied, but got %s\n", err)
+	}
+
+	err = r.IsAllowed(PermissionAuthUserInfoCompanyRead)
+	if err != ErrPermissionDenied {
+		t.Errorf("should reject with ErrPermissionDenied, but got %s\n", err)
+	}
+
+	err = r.IsAllowed(PermissionAuthUserCompanyWrite)
+	if err != ErrPermissionDenied {
+		t.Errorf("should reject with ErrPermissionDenied, but got %s\n", err)
+	}
+}
+
 func TestRole_IsAllowed_All(t *testing.T) {
 	r := Role{
 		Accesses: []string{
