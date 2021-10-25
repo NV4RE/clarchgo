@@ -1,6 +1,7 @@
 package main
 
 import (
+	fiber "clarchgo/controller/fiber"
 	"clarchgo/repository/auth"
 	authUseCase "clarchgo/use-case/auth"
 	"fmt"
@@ -12,7 +13,7 @@ import (
 
 type Config struct {
 	App struct {
-		Name        string `env:"APP_NAME"`
+		Name        string `env:"APP_NAME" envDefault:"clarchgo"`
 		Version     string `env:"APP_VERSION" envDefault:"0.0.0"`
 		Environment string `env:"APP_ENVIRONMENT" envDefault:"local"` // e.g. local, development, staging, uat, production
 	}
@@ -37,7 +38,7 @@ func main() {
 	}
 
 	// Set-up repository e.g. database, service connection
-	authRepo, err := auth.NewMongo(cfg.MongoURI, fmt.Sprintf("%s-%s", cfg.App.Environment, cfg.App))
+	authRepo, err := auth.NewMongo(cfg.MongoURI, fmt.Sprintf("%s-%s", cfg.App.Environment, cfg.App.Name))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -45,5 +46,7 @@ func main() {
 	// Set-up use-case e.g. business
 	authUC := authUseCase.NewUseCase(authRepo)
 
-	fmt.Sprintf("%s", authUC)
+	// Set-up controller/interface
+	fs := fiber.NewFiberServer(authUC)
+	fs.Serve(fmt.Sprintf("%s:%d", cfg.HttpServer.Host, cfg.HttpServer.Port))
 }
