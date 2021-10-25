@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"clarchgo/entity/auth"
-	authRepo "clarchgo/repository/auth"
 	"context"
 	"fmt"
+	"github.com/NV4RE/clarchgo/entity/auth"
+	authRepo "github.com/NV4RE/clarchgo/repository/auth"
 	"time"
 )
 

@@ -1,4 +1,4 @@
-module clarchgo
+module github.com/NV4RE/clarchgo
 
 go 1.17
 

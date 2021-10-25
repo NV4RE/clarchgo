@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"clarchgo/entity/auth"
 	"context"
 	"errors"
+	"github.com/NV4RE/clarchgo/entity/auth"
 	"time"
 )
 

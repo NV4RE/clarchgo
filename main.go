@@ -1,10 +1,10 @@
 package main
 
 import (
-	"clarchgo/controller/fiber"
-	"clarchgo/repository/auth"
-	authUseCase "clarchgo/use-case/auth"
 	"fmt"
+	"github.com/NV4RE/clarchgo/controller/fiber"
+	"github.com/NV4RE/clarchgo/repository/auth"
+	authUseCase "github.com/NV4RE/clarchgo/use-case/auth"
 	"log"
 
 	"github.com/caarlos0/env/v6"

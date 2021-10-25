@@ -1,7 +1,7 @@
 package fiber
 
 import (
-	authUseCase "clarchgo/use-case/auth"
+	authUseCase "github.com/NV4RE/clarchgo/use-case/auth"
 	"github.com/gofiber/fiber/v2"
 )
 

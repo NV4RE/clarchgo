@@ -1,8 +1,8 @@
 package fiber
 
 import (
-	"clarchgo/entity/auth"
 	"errors"
+	"github.com/NV4RE/clarchgo/entity/auth"
 	"github.com/gofiber/fiber/v2"
 	"strings"
 )
