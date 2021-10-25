@@ -1,6 +1,8 @@
 package main
 
 import (
+	"clarchgo/repository/auth"
+	"fmt"
 	"log"
 
 	"github.com/caarlos0/env"
@@ -34,4 +36,11 @@ func main() {
 	}
 
 	// Set-up repository e.g. database, service connection
+	_, err = auth.NewMongo(cfg.MongoURI, fmt.Sprintf("%s-%s", cfg.App.Environment, cfg.App))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Set-up use-case e.g. business
+
 }

@@ -1,6 +1,3 @@
-//go:build ignore
-// +build ignore
-
 package auth
 
 import (
@@ -15,7 +12,7 @@ func TestMongoDB_Case1(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	m, err := NewMongo("mongodb://localhost:27017", fmt.Sprintf("test-auth-%s", time.Now()))
+	m, err := NewMongo("mongodb://localhost:27017/", fmt.Sprintf("test-auth-%s", time.Now().Format(time.RFC3339)))
 	exitIfError(err, t)
 
 	userNames := []string{"user1", "user2", "user3", "user4", "user5"}
@@ -65,7 +62,7 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
-	users, err := m.ListUsersByIsActivated(ctx, true)
+	users, err = m.ListUsersByIsActivated(ctx, true)
 	exitIfError(err, t)
 
 	if len(users) != 0 {
@@ -73,10 +70,10 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
-	err := m.ActivateUser(ctx, userNames[0])
+	err = m.ActivateUser(ctx, userNames[0])
 	exitIfError(err, t)
 
-	users, err := m.ListUsersByIsActivated(ctx, true)
+	users, err = m.ListUsersByIsActivated(ctx, true)
 	exitIfError(err, t)
 
 	if len(users) != 1 {
@@ -89,7 +86,7 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
-	users, err := m.ListUsers(ctx)
+	users, err = m.ListUsers(ctx)
 	exitIfError(err, t)
 
 	if len(users) != len(userNames) {
@@ -97,8 +94,10 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
-	m.DeleteUserByUsername(ctx, userNames[1])
-	users, err := m.ListUsers(ctx)
+	err = m.DeleteUserByUsername(ctx, userNames[1])
+	exitIfError(err, t)
+
+	users, err = m.ListUsers(ctx)
 	exitIfError(err, t)
 
 	if len(users) != len(userNames)-1 {
@@ -106,7 +105,7 @@ func TestMongoDB_Case1(t *testing.T) {
 		return
 	}
 
-	u, err := m.GetUserByUsername(ctx, userNames[1])
+	u, err = m.GetUserByUsername(ctx, userNames[1])
 
 	if err != ErrUserNotFound {
 		t.Error("user should be deleted")

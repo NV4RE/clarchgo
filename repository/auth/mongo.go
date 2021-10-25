@@ -12,7 +12,7 @@ import (
 )
 
 type userMongoDB struct {
-	ID          primitive.ObjectID `bson:"_id"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Username    string             `bson:"username"`
 	Credentials *auth.Credentials  `bson:"-"`
 	Roles       []auth.Role        `bson:"roles"`
